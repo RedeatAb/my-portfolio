@@ -25,10 +25,10 @@ jobs:
 
      
       - name: build image 
-        run: docker build -t rabera1/portfolio .
+        run: docker build -t ${{secrets.REG_USER}}/portfolio .
 
       
       - name: push image 
         run: | 
-            docker login -u rabera1 -p ${{secrets.REG_PASS}}
-            docker push rabera1/portfolio
+            docker login -u ${{secrets.REG_USER}} -p ${{secrets.REG_PASS}}
+            docker push ${{secrets.REG_USER}}/portfolio
