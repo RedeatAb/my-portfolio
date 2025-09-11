@@ -1,5 +1,3 @@
-
-
 name: CI
 
 
@@ -34,5 +32,3 @@ jobs:
         run: | 
             docker login -u rabera1 -p ${{secrets.REGISTRY_PASS}}
             docker push rabera1/portfolio
-          
-          
