@@ -41,13 +41,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      -name: SSH to Server 
-      uses: appleboy/ssh-action@v1
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        #port: ${{ secrets.PORT }}
-        script: |
-                docker rm -f resume 
-                docker run -d --name resume -p 8080:5001 ${{secrets.REG_USER}}/portfolio:${{github.run_number}} 
+      - name: SSH to Server 
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          #port: ${{ secrets.PORT }}
+          script: |
+                  docker rm -f resume 
+                  docker run -d --name resume -p 8080:5001 ${{secrets.REG_USER}}/portfolio:${{github.run_number}} 
