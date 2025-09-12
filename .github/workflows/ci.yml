@@ -35,4 +35,4 @@ jobs:
             docker login -u ${{secrets.REG_USER}} -p ${{secrets.REG_PASS}}
         
             docker push ${{secrets.REG_USER}}/portfolio:${{github.run_number}}  
-            docker build -t ${{secrets.REG_USER}}/portfolio  
+            docker push ${{secrets.REG_USER}}/portfolio  
