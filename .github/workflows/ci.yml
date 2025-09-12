@@ -37,7 +37,7 @@ jobs:
             docker push ${{secrets.REG_USER}}/portfolio:${{github.run_number}}  
             docker push ${{secrets.REG_USER}}/portfolio   
   
-  deplopy: 
+  deploy: 
     needs: build
     runs-on: ubuntu-latest
     steps:
