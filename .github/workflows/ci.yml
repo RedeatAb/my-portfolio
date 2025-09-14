@@ -59,6 +59,11 @@ jobs:
           key: ${{ secrets.KEY }}
           #port: ${{ secrets.PORT }}
           script: | 
-                  aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
-                  docker rm -f resume || echo " "
-                  docker run -d --name resume -p 8080:5001 ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.run_number }}
+            echo "Logging into ECR..."
+            aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+            echo "Stopping old container..."
+            docker rm -f resume || echo "No existing container"
+            echo "Running new container..."
+            docker run -d --name resume -p 8080:5001 $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_RUN_NUMBER
+
+          
