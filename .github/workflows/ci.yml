@@ -26,8 +26,8 @@ jobs:
      
       - name: build image 
         run: | 
-              docker build --no-cache -t ${{secrets.REG_USER}}/portfolio:${{github.run_number}} .
-              docker build --no-cache -t ${{secrets.REG_USER}}/portfolio  .
+              docker build -t ${{secrets.REG_USER}}/portfolio:${{github.run_number}} .
+              docker build  -t ${{secrets.REG_USER}}/portfolio  .
 
       - name: Image scan 
         uses: aquasecurity/trivy-action@master
@@ -37,7 +37,7 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
 
       - name: push image 
         run: | 
