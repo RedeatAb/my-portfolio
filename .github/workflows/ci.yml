@@ -58,6 +58,30 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           #port: ${{ secrets.PORT }}
-          script:  |
-            docker rm -f resume || echo "No existing container"
-            docker run -d --name resume -p 8080:5001 ${{secrets.REG_USER}}/portfolio:${{github.run_number}}
+          envs: IMAGE_URI,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+          script: |
+            # Login to ECR
+            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
+            
+            # Pull new image
+            echo "Pulling image: $IMAGE_URI"
+            docker pull $IMAGE_URI
+            
+            # Stop existing container
+            docker rm -f resume || echo "No existing container to remove"
+            
+            # Start new container
+            echo "Starting new container..."
+            docker run -d --name resume -p 8080:5001 --restart unless-stopped $IMAGE_URI
+            
+            # Verify deployment
+            sleep 10
+            if docker ps | grep -q resume; then
+              echo "✅ Deployment successful!"
+            else
+              echo "❌ Deployment failed!"
+              exit 1
+            fi
+            
+            # Clean up old images
+            docker image prune -f
