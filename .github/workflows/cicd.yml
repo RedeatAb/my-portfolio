@@ -13,7 +13,7 @@ env:
     IMAGE_NAME: portfolio
     AWS_REGION: us-east-1
     AWS_ACCOUNT_ID: ${{secrets.AWS_ACCOUNT_ID}}
-    ECR_REPO: $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME
+    ECR_REPO: $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-portfolio
 
 jobs: 
     build:
@@ -33,11 +33,38 @@ jobs:
               with:
                role-to-assume: ${{secrets.ROLE_ARN}}
                aws-region: ${{ env.AWS_REGION }}
-            - name: Build image 
-              run: docker build -t redeatab/portcicd .
 
-            - name: check credentials 
-              run : aws s3 ls
+
+
+           
+
+
+
+            - name: Login to Amazon ECR
+              id: login-ecr
+              uses: aws-actions/amazon-ecr-login@v1
+            
+            - name: Build Docker image
+              run: |
+               docker build -t ${{ env.IMAGE_NAME }} .
+
+            - name: Tag Docker image
+              run: |
+               docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.ECR_REPO }}:latest
+            
+              
+            - name: Scan Docker image with Trivy
+              uses: aquasecurity/trivy-action@master
+              with:
+                image-ref: ${{ env.ECR_REPO }}:latest
+                format: table
+                exit-code: '1' 
+                severity: CRITICAL,HIGH
+
+            - name: Push Docker image to Amazon ECR
+              run: |
+                docker push ${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
+                  
 
 
 
